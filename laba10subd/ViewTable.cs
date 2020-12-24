@@ -16,10 +16,10 @@ namespace laba10subd
         private string tablename;
         private OnlineStoreEntities db;
         private BindingSource bs;
-        public ViewTable(string tablename, OnlineStoreEntities db)
+        public ViewTable(string tablename)
         {
             this.tablename = tablename;
-            this.db = db;
+            this.db = new OnlineStoreEntities();
             bs = new BindingSource();
             InitializeComponent();
         }
@@ -81,12 +81,14 @@ namespace laba10subd
                     db.SaveChanges();
                     break;
                 case "Order":
-                    db.OrderView.Load();
-                    bs.DataSource = db.OrderView.Local.ToBindingList();
+                    EditOrder edito = new EditOrder();
+                    if (edito.ShowDialog() == DialogResult.OK) db.Order.Add(edito.Result);
+                    db.SaveChanges();
                     break;
                 case "Delivery":
-                    db.DeliveryView.Load();
-                    bs.DataSource = db.DeliveryView.Local.ToBindingList();
+                    EditDelivery editd = new EditDelivery();
+                    if (editd.ShowDialog() == DialogResult.OK) db.Delivery.Add(editd.Result);
+                    db.SaveChanges();
                     break;
                 case "Supplier":
                     EditSupplier edits = new EditSupplier();
@@ -119,12 +121,14 @@ namespace laba10subd
                     db.SaveChanges();
                     break;
                 case "Order":
-                    db.OrderView.Load();
-                    bs.DataSource = db.OrderView.Local.ToBindingList();
+                    Order remo = db.Order.Find(dataGridView1.SelectedRows[0].Cells["ID"].Value);
+                    db.Order.Remove(remo);
+                    db.SaveChanges();
                     break;
                 case "Delivery":
-                    db.DeliveryView.Load();
-                    bs.DataSource = db.DeliveryView.Local.ToBindingList();
+                    Delivery remd = db.Delivery.Find(dataGridView1.SelectedRows[0].Cells["ID"].Value);
+                    db.Delivery.Remove(remd);
+                    db.SaveChanges();
                     break;
                 case "Supplier":
                     Supplier rems = db.Supplier.Find(dataGridView1.SelectedRows[0].Cells["ID"].Value);
@@ -172,12 +176,27 @@ namespace laba10subd
                     }
                     break;
                 case "Order":
-                    db.OrderView.Load();
-                    bs.DataSource = db.OrderView.Local.ToBindingList();
+                    Order remo = db.Order.Find(dataGridView1.SelectedRows[0].Cells["ID"].Value);
+                    EditOrder edito = new EditOrder(remo);
+                    if (edito.ShowDialog() == DialogResult.OK)
+                    {
+                        remo.ClientID = edito.Result.ClientID;
+                        remo.Date = edito.Result.Date;
+                        remo.Amount = edito.Result.Amount;
+                        remo.ProductID = edito.Result.ProductID;
+                        remo.DeliveryID = edito.Result.DeliveryID;
+                        db.SaveChanges();
+                    }
                     break;
                 case "Delivery":
-                    db.DeliveryView.Load();
-                    bs.DataSource = db.DeliveryView.Local.ToBindingList();
+                    Delivery remd = db.Delivery.Find(dataGridView1.SelectedRows[0].Cells["ID"].Value);
+                    EditDelivery editd = new EditDelivery(remd);
+                    if (editd.ShowDialog() == DialogResult.OK)
+                    {
+                        remd.Name = editd.Result.Name;
+                        remd.Phonenumber = editd.Result.Phonenumber;
+                        db.SaveChanges();
+                    }
                     break;
                 case "Supplier":
                     Supplier rems = db.Supplier.Find(dataGridView1.SelectedRows[0].Cells["ID"].Value);
@@ -208,6 +227,11 @@ namespace laba10subd
             db.Dispose();
             db = new OnlineStoreEntities();
             UpdateTable();
+        }
+
+        private void ViewTable_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            db.Dispose();
         }
     }
 }

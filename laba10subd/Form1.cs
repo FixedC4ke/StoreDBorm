@@ -32,7 +32,7 @@ namespace laba10subd
         
         private void ShowTable(object sender, EventArgs e)
         {
-            ViewTable vt = new ViewTable(((ToolStripMenuItem)sender).Text, db);
+            ViewTable vt = new ViewTable(((ToolStripMenuItem)sender).Text);
             vt.MdiParent = this;
             vt.Show();
         }

@@ -42,6 +42,7 @@ namespace laba10subd
                 comboBox2.SelectedValue = edprod.ProductTypeID;
                 textBox2.Text = edprod.Measure;
             }
+            db.Dispose();
         }
 
         private void button1_Click(object sender, EventArgs e)
